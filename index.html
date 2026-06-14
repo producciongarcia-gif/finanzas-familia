@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Finanzas Óscar">
+<meta name="theme-color" content="#0d0f14">
+<title>Finanzas Óscar</title>
+<link rel="manifest" href="data:application/json,{%22name%22:%22Finanzas%20%C3%93scar%22,%22short_name%22:%22Finanzas%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d0f14%22,%22theme_color%22:%22%230d0f14%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='20'%20fill='%230d0f14'/%3E%3Ctext%20y='.9em'%20font-size='80'%20x='10'%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d0f14;--surface:#141720;--surface2:#1a1e2a;--border:#232838;
+  --accent:#4f8ef7;--accent2:#7c5cbf;--green:#34c97a;--red:#f04f5a;
+  --yellow:#f5a623;--text:#e8eaf0;--muted:#6b7280;--muted2:#9ca3af;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px}
+#app{display:flex;flex-direction:column;height:100%}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.hdr-title{font-weight:800;font-size:15px;font-family:monospace}
+.hdr-sub{font-size:10px;color:var(--muted2);margin-top:1px}
+.badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;font-family:monospace;white-space:nowrap}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:1px solid var(--border);border-radius:8px;color:var(--muted2);cursor:pointer;font-size:11px;font-weight:700;padding:6px 12px;white-space:nowrap;background:transparent;transition:all .15s;font-family:monospace}
+.tab.active{background:var(--accent);border-color:transparent;color:#fff}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.card-sm{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px}
+.section-title{font-family:monospace;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+
+/* METRIC */
+.metric-val{font-family:monospace;font-size:20px;font-weight:800;letter-spacing:-1px;line-height:1}
+.metric-lbl{font-size:10px;color:var(--muted2);margin-bottom:6px}
+.metric-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* PROGRESS */
+.prog-row{margin-bottom:14px}
+.prog-header{display:flex;justify-content:space-between;margin-bottom:5px}
+.prog-lbl{font-size:11px;color:var(--muted2)}
+.prog-pct{font-size:11px;font-weight:800;font-family:monospace}
+.prog-track{height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;transition:width .5s ease}
+.prog-sub{font-size:10px;color:var(--muted);margin-top:3px}
+
+/* CUBO */
+.cubo{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
+.cubo-icon{font-size:18px;width:28px;text-align:center}
+.cubo-name{font-size:12px;font-weight:600}
+.cubo-target{font-size:10px;color:var(--muted);margin-top:1px}
+.cubo-amt{font-family:monospace;font-size:15px;font-weight:800;color:var(--accent);white-space:nowrap}
+
+/* HITOS */
+.hito{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.hito:last-child{border-bottom:none}
+.hito-text{flex:1;font-size:12px}
+.hito-detail{font-size:10px;color:var(--muted);margin-top:1px}
+
+/* FORM */
+.form-group{margin-bottom:10px}
+.form-label{font-size:11px;color:var(--muted2);margin-bottom:5px;display:flex;justify-content:space-between}
+input,select,textarea{
+  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-size:13px;padding:10px 12px;outline:none;
+  font-family:inherit;width:100%;transition:border-color .2s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{resize:vertical;min-height:72px}
+select option{background:var(--surface2)}
+
+/* BUTTONS */
+.btn{border:none;border-radius:8px;cursor:pointer;font-family:monospace;font-size:12px;font-weight:800;padding:10px 16px;transition:opacity .15s;width:100%;margin-top:4px;letter-spacing:.3px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:active{opacity:.8}
+.btn-danger{background:rgba(240,79,90,.15);color:var(--red);border:1px solid rgba(240,79,90,.3);padding:5px 10px;width:auto;font-size:11px;margin-top:0;border-radius:6px}
+.btn-success{background:var(--green);color:#fff}
+
+/* MOV LIST */
+.mov-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
+.mov-date{font-size:10px;color:var(--muted);width:50px;flex-shrink:0}
+.mov-info{flex:1;min-width:0}
+.mov-amt{font-family:monospace;font-weight:800;font-size:13px;white-space:nowrap}
+.tag{display:inline-block;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:700}
+
+/* NOTAS */
+.nota-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.nota-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0}
+.nota-text{flex:1;font-size:13px}
+.nota-date{font-size:10px;color:var(--muted);margin-top:2px}
+
+/* PROJ */
+.proj-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
+.proj-lbl{font-size:12px;color:var(--muted2)}
+.proj-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.proj-val{font-family:monospace;font-weight:800;font-size:20px}
+
+/* HINT BOX */
+.hint{padding:8px 12px;border-radius:8px;font-size:10px;color:var(--muted2);margin-top:8px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-weight:800;font-size:12px;padding:10px 20px;border-radius:20px;font-family:monospace;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* EMPTY */
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:24px 0}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">📊 Finanzas Óscar</div>
+      <div class="hdr-sub">Plan activo desde Jul 2026</div>
+    </div>
+    <div class="badge" id="month-badge">—</div>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="content" id="content"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────
+const KEY = 'oscar_fin_v3';
+const INIT = {
+  emergencia:0, deuda:5000, etfs:230, usdt:3668,
+  ahorroMes:null, movimientos:[], notas:[]
+};
+
+let S = INIT;
+try { const s=localStorage.getItem(KEY); if(s) S={...INIT,...JSON.parse(s)}; } catch{}
+
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch{} }
+
+// ── UTILS ────────────────────────────────────────────────────
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+function fmt(n){ return Number(n).toLocaleString('es-ES',{maximumFractionDigits:0})+' €'; }
+function today(){ return new Date().toISOString().split('T')[0]; }
+function fmtDate(d){ if(!d)return''; const[y,m,day]=d.split('-'); return`${day}/${m}/${y}`; }
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+
+const TIPOS={
+  emergencia:{label:'🛡️ Emergencia',color:'#34c97a'},
+  deuda:{label:'⚔️ Pago deuda',color:'#f04f5a'},
+  etf:{label:'📈 ETF',color:'#4f8ef7'},
+  usdt:{label:'💵 USDT',color:'#f5a623'},
+  gasto:{label:'💸 Gasto extra',color:'#f04f5a'},
+  ingreso:{label:'💰 Ingreso extra',color:'#34c97a'},
+};
+
+// ── TABS ─────────────────────────────────────────────────────
+const TABS=['📊 Resumen','📝 Movimientos','🗒️ Notas','🔄 Actualizar','🔭 Proyección'];
+let activeTab=0;
+
+function renderTabs(){
+  document.getElementById('tabs').innerHTML=TABS.map((t,i)=>
+    `<button class="tab${i===activeTab?' active':''}" onclick="setTab(${i})">${t}</button>`
+  ).join('');
+}
+
+function setTab(i){ activeTab=i; renderTabs(); renderContent(); }
+
+// ── MONTH BADGE ──────────────────────────────────────────────
+function updateBadge(){
+  const n=new Date();
+  document.getElementById('month-badge').textContent=MONTHS[n.getMonth()]+' '+n.getFullYear();
+}
+
+// ── PROGRESS BAR ─────────────────────────────────────────────
+function progBar(pct,color){
+  return`<div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div>`;
+}
+
+// ── SCREENS ──────────────────────────────────────────────────
+function screenResumen(){
+  const pe=Math.min(100,(S.emergencia/4500)*100);
+  const pd=Math.min(100,((5000-S.deuda)/5000)*100);
+  const petfs=Math.min(100,(S.etfs/2030)*100);
+  const pa=S.ahorroMes?Math.min(100,(S.ahorroMes/(0.4*1631))*100):0;
+
+  const hitos=[
+    {label:'Fondo emergencia 2.400€',detail:'Meta 3M · Oct 2026',done:S.emergencia>=2400},
+    {label:'Deuda < 3.800€',detail:'Meta 3M · Oct 2026',done:S.deuda<=3800},
+    {label:'Fondo emergencia 4.500€',detail:'Meta 6M · Ene 2027',done:S.emergencia>=4500},
+    {label:'Deuda < 500€',detail:'Meta 6M · Ene 2027',done:S.deuda<=500},
+    {label:'Deuda 0€ + Cartera 2.030€',detail:'Meta 12M · Jul 2027',done:S.deuda===0&&S.etfs>=2030},
+  ];
+
+  return`
+  <div class="grid2">
+    <div class="card-sm"><div class="metric-lbl">🛡️ Emergencia</div><div class="metric-val" style="color:#34c97a">${fmt(S.emergencia)}</div><div class="metric-sub">Meta: 4.500 €</div></div>
+    <div class="card-sm"><div class="metric-lbl">⚔️ Deuda</div><div class="metric-val" style="color:#f04f5a">${fmt(S.deuda)}</div><div class="metric-sub">Meta: 0 €</div></div>
+    <div class="card-sm"><div class="metric-lbl">📈 ETFs</div><div class="metric-val" style="color:#4f8ef7">${fmt(S.etfs)}</div><div class="metric-sub">Meta 12M: 2.030 €</div></div>
+    <div class="card-sm"><div class="metric-lbl">💵 USDT</div><div class="metric-val" style="color:#f5a623">${fmt(S.usdt)}</div><div class="metric-sub">Mantener</div></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Progreso hacia metas</div>
+    <div class="prog-row">
+      <div class="prog-header"><span class="prog-lbl">🛡️ Emergencia</span><span class="prog-pct">${Math.round(pe)}%</span></div>
+      ${progBar(pe,'#34c97a')}
+      <div class="prog-sub">${fmt(S.emergencia)} de 4.500 €</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-header"><span class="prog-lbl">⚔️ Deuda liquidada</span><span class="prog-pct">${Math.round(pd)}%</span></div>
+      ${progBar(pd,'#f04f5a')}
+      <div class="prog-sub">${fmt(5000-S.deuda)} pagados de 5.000 €</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-header"><span class="prog-lbl">📈 Cartera ETFs</span><span class="prog-pct">${Math.round(petfs)}%</span></div>
+      ${progBar(petfs,'#4f8ef7')}
+      <div class="prog-sub">${fmt(S.etfs)} de 2.030 €</div>
+    </div>
+    <div class="prog-row" style="margin-bottom:0">
+      <div class="prog-header"><span class="prog-lbl">💰 Ratio ahorro</span><span class="prog-pct">${S.ahorroMes?Math.round((S.ahorroMes/1631)*100)+'%':'—'}</span></div>
+      ${progBar(pa,'#7c5cbf')}
+      <div class="prog-sub">Meta: 40%+ de ingresos</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Distribución mensual — 1.100 €</div>
+    <div class="cubo"><div class="cubo-icon">🛡️</div><div style="flex:1"><div class="cubo-name">Cubo 1 — Emergencia</div><div class="cubo-target">Colchón 3-6 meses</div></div><div class="cubo-amt">550 €</div></div>
+    <div class="cubo"><div class="cubo-icon">⚔️</div><div style="flex:1"><div class="cubo-name">Cubo 2 — Deuda</div><div class="cubo-target">Primero la del 18% TAE</div></div><div class="cubo-amt">400 €</div></div>
+    <div class="cubo"><div class="cubo-icon">📈</div><div style="flex:1"><div class="cubo-name">Cubo 3 — ETFs</div><div class="cubo-target">MSCI World, S&P500, EM</div></div><div class="cubo-amt">150 €</div></div>
+    <div class="hint" style="background:rgba(79,142,247,.08)">💡 Mes 9 aprox: deuda liquidada → redirige 400€ a ETFs (total 550€/mes)</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Hitos del plan</div>
+    ${hitos.map(h=>`
+    <div class="hito">
+      <span style="font-size:14px">${h.done?'🟢':'🔴'}</span>
+      <div style="flex:1"><div class="hito-text">${h.label}</div><div class="hito-detail">${h.detail}</div></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function screenMovimientos(){
+  return`
+  <div class="card">
+    <div class="section-title">➕ Añadir movimiento</div>
+    <div class="form-group"><input type="date" id="mov-fecha" value="${today()}"></div>
+    <div class="form-group">
+      <select id="mov-tipo">
+        <option value="">— Tipo —</option>
+        ${Object.entries(TIPOS).map(([v,t])=>`<option value="${v}">${t.label}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><input type="number" id="mov-imp" placeholder="Importe €" inputmode="decimal"></div>
+    <div class="form-group"><input type="text" id="mov-nota" placeholder="Nota (opcional)"></div>
+    <button class="btn btn-primary" onclick="addMov()">Guardar movimiento</button>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="section-title" style="margin-bottom:0">Historial</div>
+      <span style="background:rgba(79,142,247,.15);color:#4f8ef7;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;font-family:monospace">${S.movimientos.length} entradas</span>
+    </div>
+    ${S.movimientos.length===0?'<div class="empty">Sin movimientos aún.</div>':
+      S.movimientos.map(m=>{
+        const t=TIPOS[m.tipo]||{label:m.tipo,color:'#4f8ef7'};
+        const isPos=['emergencia','etf','usdt','ingreso'].includes(m.tipo);
+        return`<div class="mov-item">
+          <div class="mov-date">${fmtDate(m.fecha)}</div>
+          <div class="mov-info">
+            <span class="tag" style="background:${t.color}22;color:${t.color}">${t.label}</span>
+            ${m.nota?`<div style="font-size:10px;color:#6b7280;margin-top:2px">${m.nota}</div>`:''}
+          </div>
+          <div class="mov-amt" style="color:${isPos?'#34c97a':'#f04f5a'}">${isPos?'+':'-'}${m.importe.toLocaleString('es-ES')} €</div>
+          <button class="btn btn-danger" onclick="delMov(${m.id})">✕</button>
+        </div>`;
+      }).join('')
+    }
+  </div>`;
+}
+
+function screenNotas(){
+  return`
+  <div class="card">
+    <div class="section-title">➕ Nueva nota / tarea</div>
+    <div class="form-group"><textarea id="nota-texto" placeholder="Tarea, reflexión o recordatorio financiero..."></textarea></div>
+    <div class="form-group"><input type="date" id="nota-fecha" value="${today()}"></div>
+    <button class="btn btn-primary" onclick="addNota()">Añadir nota</button>
+  </div>
+  <div class="card">
+    <div class="section-title">📋 Notas guardadas</div>
+    ${S.notas.length===0?'<div class="empty">Sin notas aún.</div>':
+      S.notas.map(n=>`
+      <div class="nota-item">
+        <div class="nota-dot"></div>
+        <div style="flex:1"><div class="nota-text">${n.texto}</div><div class="nota-date">${fmtDate(n.fecha)}</div></div>
+        <button class="btn btn-danger" onclick="delNota(${n.id})">✕</button>
+      </div>`).join('')
+    }
+  </div>`;
+}
+
+function screenActualizar(){
+  const fields=[
+    {key:'emergencia',label:'🛡️ Fondo emergencia',current:fmt(S.emergencia)},
+    {key:'deuda',label:'⚔️ Deuda restante',current:fmt(S.deuda)},
+    {key:'etfs',label:'📈 Cartera ETFs',current:fmt(S.etfs)},
+    {key:'usdt',label:'💵 USDT',current:fmt(S.usdt)},
+    {key:'ahorro',label:'💰 Ahorro este mes',current:S.ahorroMes?fmt(S.ahorroMes):'—'},
+  ];
+  return`
+  <div class="card">
+    <div class="section-title">🔄 Actualizar saldos reales</div>
+    <div style="font-size:11px;color:#9ca3af;margin-bottom:14px">Deja en blanco los campos que no quieras cambiar.</div>
+    ${fields.map(f=>`
+    <div class="form-group">
+      <div class="form-label"><span>${f.label}</span><span style="color:#6b7280">Actual: ${f.current}</span></div>
+      <input type="number" id="upd-${f.key}" placeholder="Nuevo valor €" inputmode="decimal">
+    </div>`).join('')}
+    <button class="btn btn-primary" onclick="actualizarSaldos()" style="margin-top:8px">Actualizar dashboard</button>
+  </div>`;
+}
+
+function screenProyeccion(){
+  const years=[
+    {label:'Año 1 · Jul 2027',val:'~7.000 €',color:'#4f8ef7',sub:'Base construida'},
+    {label:'Año 2 · Jul 2028',val:'~17.000 €',color:'#4f8ef7',sub:'Compuesto visible'},
+    {label:'Año 3 · Jul 2029',val:'~28.000 €',color:'#34c97a',sub:'El dinero trabaja'},
+    {label:'Año 4 · Jul 2030',val:'~40.000 €',color:'#34c97a',sub:'Efecto compuesto real'},
+    {label:'Año 5 · Jul 2031',val:'~54.000 €',color:'#f5a623',sub:'🎯 Objetivo a los 30 años'},
+  ];
+  const etfs=[
+    {label:'MSCI World (Acc)',pct:60,color:'#4f8ef7',sub:'~90€/mes'},
+    {label:'S&P 500 (Acc)',pct:20,color:'#34c97a',sub:'~30€/mes'},
+    {label:'Emerging Markets (Acc)',pct:10,color:'#f5a623',sub:'~15€/mes'},
+    {label:'Renta fija c/p',pct:10,color:'#7c5cbf',sub:'~15€/mes'},
+  ];
+  return`
+  <div class="card">
+    <div class="section-title">🔭 Proyección a 5 años (831€/mes desde mes 9)</div>
+    ${years.map(y=>`
+    <div class="proj-row">
+      <div><div class="proj-lbl">${y.label}</div><div class="proj-sub">${y.sub}</div></div>
+      <div class="proj-val" style="color:${y.color}">${y.val}</div>
+    </div>`).join('')}
+    <div class="hint" style="background:rgba(79,142,247,.08);margin-top:10px">📖 Rentabilidad histórica MSCI World ~7% anual real. Fuente: Bogle on Mutual Funds (1993). Rentabilidades pasadas no garantizan futuras.</div>
+  </div>
+  <div class="card">
+    <div class="section-title">📊 Distribución ETF objetivo</div>
+    ${etfs.map(e=>`
+    <div class="prog-row">
+      <div class="prog-header"><span class="prog-lbl">${e.label}</span><span class="prog-pct" style="color:${e.color}">${e.pct}% · ${e.sub}</span></div>
+      ${progBar(e.pct,e.color)}
+    </div>`).join('')}
+  </div>`;
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+function renderContent(){
+  const screens=[screenResumen,screenMovimientos,screenNotas,screenActualizar,screenProyeccion];
+  document.getElementById('content').innerHTML=screens[activeTab]();
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────
+function addMov(){
+  const fecha=document.getElementById('mov-fecha').value;
+  const tipo=document.getElementById('mov-tipo').value;
+  const imp=parseFloat(document.getElementById('mov-imp').value);
+  const nota=document.getElementById('mov-nota').value.trim();
+  if(!tipo||isNaN(imp)||imp<=0){toast('⚠️ Completa tipo e importe');return;}
+  const m={id:Date.now(),fecha,tipo,importe:imp,nota};
+  S.movimientos.unshift(m);
+  if(tipo==='emergencia') S.emergencia+=imp;
+  if(tipo==='deuda') S.deuda=Math.max(0,S.deuda-imp);
+  if(tipo==='etf') S.etfs+=imp;
+  if(tipo==='usdt') S.usdt+=imp;
+  save(); toast('✅ Guardado'); renderContent();
+}
+
+function delMov(id){
+  S.movimientos=S.movimientos.filter(m=>m.id!==id);
+  save(); renderContent();
+}
+
+function addNota(){
+  const texto=document.getElementById('nota-texto').value.trim();
+  const fecha=document.getElementById('nota-fecha').value;
+  if(!texto){toast('⚠️ Escribe algo primero');return;}
+  S.notas.unshift({id:Date.now(),texto,fecha});
+  save(); toast('✅ Nota guardada'); renderContent();
+}
+
+function delNota(id){
+  S.notas=S.notas.filter(n=>n.id!==id);
+  save(); renderContent();
+}
+
+function actualizarSaldos(){
+  const get=id=>{const v=document.getElementById(id).value;return v!==''&&!isNaN(parseFloat(v))?parseFloat(v):null;};
+  const e=get('upd-emergencia'),d=get('upd-deuda'),et=get('upd-etfs'),u=get('upd-usdt'),a=get('upd-ahorro');
+  if(e!==null) S.emergencia=e;
+  if(d!==null) S.deuda=d;
+  if(et!==null) S.etfs=et;
+  if(u!==null) S.usdt=u;
+  if(a!==null) S.ahorroMes=a;
+  save(); toast('✅ Dashboard actualizado'); renderContent();
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+updateBadge();
+renderTabs();
+renderContent();
+</script>
+</body>
+</html>
