@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-title" content="Finanzas Óscar">
 <meta name="theme-color" content="#0d0f14">
 <title>Finanzas Óscar</title>
-<link rel="manifest" href="data:application/json,{%22name%22:%22Finanzas%20%C3%93scar%22,%22short_name%22:%22Finanzas%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%230d0f14%22,%22theme_color%22:%22%230d0f14%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='20'%20fill='%230d0f14'/%3E%3Ctext%20y='.9em'%20font-size='80'%20x='10'%3E%F0%9F%93%8A%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -20,35 +19,80 @@
 html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px}
 #app{display:flex;flex-direction:column;height:100%}
 
-/* HEADER */
+/* ── LOCK SCREEN ── */
+#lock-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;padding:32px;
+}
+.lock-logo{font-size:56px;margin-bottom:16px}
+.lock-title{font-family:monospace;font-size:20px;font-weight:800;margin-bottom:6px}
+.lock-sub{font-size:12px;color:var(--muted2);margin-bottom:36px;text-align:center}
+.pin-dots{display:flex;gap:14px;margin-bottom:32px}
+.pin-dot{
+  width:16px;height:16px;border-radius:50%;
+  border:2px solid var(--muted);background:transparent;
+  transition:all .2s;
+}
+.pin-dot.filled{background:var(--accent);border-color:var(--accent)}
+.pin-dot.error{background:var(--red);border-color:var(--red)}
+.pin-dot.success{background:var(--green);border-color:var(--green)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:280px}
+.key{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  color:var(--text);cursor:pointer;font-size:22px;font-weight:700;
+  padding:18px 0;text-align:center;font-family:monospace;
+  transition:all .15s;user-select:none;
+}
+.key:active{background:var(--accent);border-color:var(--accent);color:#fff;transform:scale(.95)}
+.key-del{font-size:18px}
+.key-empty{visibility:hidden}
+.lock-error{color:var(--red);font-size:12px;font-weight:700;margin-top:16px;min-height:20px;font-family:monospace}
+.lock-attempts{color:var(--muted);font-size:11px;margin-top:8px;min-height:16px}
+
+/* ── SETUP PIN SCREEN ── */
+#setup-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9998;padding:32px;
+}
+.setup-step{font-size:11px;color:var(--accent);font-family:monospace;font-weight:700;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+
+/* ── BLOCKED SCREEN ── */
+#blocked-screen{
+  position:fixed;inset:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10000;padding:32px;display:none;
+}
+.blocked-icon{font-size:64px;margin-bottom:16px}
+.blocked-title{font-family:monospace;font-size:18px;font-weight:800;color:var(--red);margin-bottom:8px}
+.blocked-msg{font-size:12px;color:var(--muted2);text-align:center;line-height:1.6}
+.blocked-timer{font-family:monospace;font-size:32px;font-weight:800;color:var(--red);margin-top:24px}
+
+/* ── MAIN APP ── */
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
 .hdr-title{font-weight:800;font-size:15px;font-family:monospace}
 .hdr-sub{font-size:10px;color:var(--muted2);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:8px}
 .badge{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;font-family:monospace;white-space:nowrap}
+.lock-btn{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted2);cursor:pointer;font-size:16px;padding:4px 8px}
 
-/* TABS */
 .tabs{display:flex;gap:4px;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{border:1px solid var(--border);border-radius:8px;color:var(--muted2);cursor:pointer;font-size:11px;font-weight:700;padding:6px 12px;white-space:nowrap;background:transparent;transition:all .15s;font-family:monospace}
 .tab.active{background:var(--accent);border-color:transparent;color:#fff}
 
-/* CONTENT */
 .content{flex:1;overflow-y:auto;padding:14px;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 
-/* CARDS */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
 .card-sm{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px}
 .section-title{font-family:monospace;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
 
-/* GRID */
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-
-/* METRIC */
 .metric-val{font-family:monospace;font-size:20px;font-weight:800;letter-spacing:-1px;line-height:1}
 .metric-lbl{font-size:10px;color:var(--muted2);margin-bottom:6px}
 .metric-sub{font-size:10px;color:var(--muted);margin-top:3px}
 
-/* PROGRESS */
 .prog-row{margin-bottom:14px}
 .prog-header{display:flex;justify-content:space-between;margin-bottom:5px}
 .prog-lbl{font-size:11px;color:var(--muted2)}
@@ -57,101 +101,374 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .prog-fill{height:100%;border-radius:99px;transition:width .5s ease}
 .prog-sub{font-size:10px;color:var(--muted);margin-top:3px}
 
-/* CUBO */
 .cubo{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:8px}
 .cubo-icon{font-size:18px;width:28px;text-align:center}
 .cubo-name{font-size:12px;font-weight:600}
 .cubo-target{font-size:10px;color:var(--muted);margin-top:1px}
 .cubo-amt{font-family:monospace;font-size:15px;font-weight:800;color:var(--accent);white-space:nowrap}
 
-/* HITOS */
 .hito{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .hito:last-child{border-bottom:none}
 .hito-text{flex:1;font-size:12px}
 .hito-detail{font-size:10px;color:var(--muted);margin-top:1px}
 
-/* FORM */
 .form-group{margin-bottom:10px}
 .form-label{font-size:11px;color:var(--muted2);margin-bottom:5px;display:flex;justify-content:space-between}
-input,select,textarea{
-  background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  color:var(--text);font-size:13px;padding:10px 12px;outline:none;
-  font-family:inherit;width:100%;transition:border-color .2s
-}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;padding:10px 12px;outline:none;font-family:inherit;width:100%;transition:border-color .2s}
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 textarea{resize:vertical;min-height:72px}
 select option{background:var(--surface2)}
 
-/* BUTTONS */
 .btn{border:none;border-radius:8px;cursor:pointer;font-family:monospace;font-size:12px;font-weight:800;padding:10px 16px;transition:opacity .15s;width:100%;margin-top:4px;letter-spacing:.3px}
 .btn-primary{background:var(--accent);color:#fff}
 .btn-primary:active{opacity:.8}
 .btn-danger{background:rgba(240,79,90,.15);color:var(--red);border:1px solid rgba(240,79,90,.3);padding:5px 10px;width:auto;font-size:11px;margin-top:0;border-radius:6px}
-.btn-success{background:var(--green);color:#fff}
 
-/* MOV LIST */
 .mov-item{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--border)}
 .mov-date{font-size:10px;color:var(--muted);width:50px;flex-shrink:0}
 .mov-info{flex:1;min-width:0}
 .mov-amt{font-family:monospace;font-weight:800;font-size:13px;white-space:nowrap}
 .tag{display:inline-block;padding:2px 7px;border-radius:99px;font-size:10px;font-weight:700}
 
-/* NOTAS */
 .nota-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
 .nota-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0}
 .nota-text{flex:1;font-size:13px}
 .nota-date{font-size:10px;color:var(--muted);margin-top:2px}
 
-/* PROJ */
 .proj-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
 .proj-lbl{font-size:12px;color:var(--muted2)}
 .proj-sub{font-size:10px;color:var(--muted);margin-top:1px}
 .proj-val{font-family:monospace;font-weight:800;font-size:20px}
 
-/* HINT BOX */
 .hint{padding:8px 12px;border-radius:8px;font-size:10px;color:var(--muted2);margin-top:8px}
-
-/* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-weight:800;font-size:12px;padding:10px 20px;border-radius:20px;font-family:monospace;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-weight:800;font-size:12px;padding:10px 20px;border-radius:20px;font-family:monospace;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
-
-/* EMPTY */
 .empty{text-align:center;color:var(--muted);font-size:13px;padding:24px 0}
 </style>
 </head>
 <body>
-<div id="app">
+
+<!-- BLOCKED SCREEN -->
+<div id="blocked-screen">
+  <div class="blocked-icon">🔒</div>
+  <div class="blocked-title">Acceso bloqueado</div>
+  <div class="blocked-msg">Demasiados intentos fallidos.<br>Espera antes de intentarlo de nuevo.</div>
+  <div class="blocked-timer" id="block-timer">5:00</div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div id="setup-screen" style="display:none">
+  <div class="lock-logo">🔐</div>
+  <div class="setup-step" id="setup-step-label">Paso 1 de 2</div>
+  <div class="lock-title" id="setup-title">Crea tu PIN</div>
+  <div class="lock-sub" id="setup-sub">Elige un PIN de 6 dígitos para proteger tu dashboard</div>
+  <div class="pin-dots" id="setup-dots"></div>
+  <div class="keypad" id="setup-keypad"></div>
+  <div class="lock-error" id="setup-error"></div>
+</div>
+
+<!-- LOCK SCREEN -->
+<div id="lock-screen" style="display:none">
+  <div class="lock-logo">📊</div>
+  <div class="lock-title">Finanzas Óscar</div>
+  <div class="lock-sub">Introduce tu PIN para acceder</div>
+  <div class="pin-dots" id="lock-dots"></div>
+  <div class="keypad" id="lock-keypad"></div>
+  <div class="lock-error" id="lock-error"></div>
+  <div class="lock-attempts" id="lock-attempts"></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
   <div class="hdr">
     <div>
       <div class="hdr-title">📊 Finanzas Óscar</div>
       <div class="hdr-sub">Plan activo desde Jul 2026</div>
     </div>
-    <div class="badge" id="month-badge">—</div>
+    <div class="hdr-right">
+      <div class="badge" id="month-badge">—</div>
+      <button class="lock-btn" onclick="lockApp()" title="Bloquear">🔒</button>
+    </div>
   </div>
   <div class="tabs" id="tabs"></div>
   <div class="content" id="content"></div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ────────────────────────────────────────────────────
-const KEY = 'oscar_fin_v3';
-const INIT = {
-  emergencia:0, deuda:5000, etfs:230, usdt:3668,
-  ahorroMes:null, movimientos:[], notas:[]
+// ── SECURITY ─────────────────────────────────────────────────
+const SEC_KEY = 'oscar_sec_v1';
+const DATA_KEY = 'oscar_fin_v3';
+const PIN_LENGTH = 6;
+const MAX_ATTEMPTS = 5;
+const BLOCK_TIME = 5 * 60; // 5 minutos en segundos
+
+let secState = {
+  pinHash: null,
+  attempts: 0,
+  blockedUntil: null
 };
 
-let S = INIT;
-try { const s=localStorage.getItem(KEY); if(s) S={...INIT,...JSON.parse(s)}; } catch{}
+try {
+  const s = localStorage.getItem(SEC_KEY);
+  if (s) secState = {...secState, ...JSON.parse(s)};
+} catch {}
 
-function save(){ try{localStorage.setItem(KEY,JSON.stringify(S));}catch{} }
+function saveSec() {
+  try { localStorage.setItem(SEC_KEY, JSON.stringify(secState)); } catch {}
+}
 
-// ── UTILS ────────────────────────────────────────────────────
+// Hash simple para el PIN (no criptográfico pero suficiente)
+function hashPin(pin) {
+  let hash = 0;
+  const str = pin + 'oscar_salt_2026';
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+// ── KEYPAD BUILDER ───────────────────────────────────────────
+function buildKeypad(containerId, onKey) {
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  const container = document.getElementById(containerId);
+  container.innerHTML = keys.map(k => {
+    if (k === '') return `<div class="key key-empty"></div>`;
+    if (k === '⌫') return `<div class="key key-del" onclick="${onKey}('DEL')">${k}</div>`;
+    return `<div class="key" onclick="${onKey}('${k}')">${k}</div>`;
+  }).join('');
+}
+
+function buildDots(containerId, count, filled, state='normal') {
+  const container = document.getElementById(containerId);
+  container.innerHTML = Array.from({length: PIN_LENGTH}, (_, i) => {
+    let cls = 'pin-dot';
+    if (state === 'error') cls += ' error';
+    else if (state === 'success') cls += ' success';
+    else if (i < filled) cls += ' filled';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+// ── BLOCK SYSTEM ─────────────────────────────────────────────
+let blockInterval = null;
+
+function checkBlocked() {
+  if (!secState.blockedUntil) return false;
+  const now = Date.now();
+  if (now < secState.blockedUntil) return true;
+  secState.blockedUntil = null;
+  secState.attempts = 0;
+  saveSec();
+  return false;
+}
+
+function showBlockedScreen() {
+  document.getElementById('blocked-screen').style.display = 'flex';
+  document.getElementById('lock-screen').style.display = 'none';
+
+  function updateTimer() {
+    const remaining = Math.max(0, Math.ceil((secState.blockedUntil - Date.now()) / 1000));
+    const m = Math.floor(remaining / 60);
+    const s = remaining % 60;
+    document.getElementById('block-timer').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+    if (remaining <= 0) {
+      clearInterval(blockInterval);
+      secState.blockedUntil = null;
+      secState.attempts = 0;
+      saveSec();
+      document.getElementById('blocked-screen').style.display = 'none';
+      showLockScreen();
+    }
+  }
+  updateTimer();
+  blockInterval = setInterval(updateTimer, 1000);
+}
+
+// ── SETUP PIN ────────────────────────────────────────────────
+let setupPin1 = '';
+let setupPin2 = '';
+let setupStep = 1;
+let setupCurrent = '';
+
+function showSetupScreen() {
+  document.getElementById('setup-screen').style.display = 'flex';
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  setupStep = 1;
+  setupCurrent = '';
+  setupPin1 = '';
+  updateSetupUI();
+  buildKeypad('setup-keypad', 'setupKey');
+}
+
+function updateSetupUI() {
+  buildDots('setup-dots', PIN_LENGTH, setupCurrent.length);
+  if (setupStep === 1) {
+    document.getElementById('setup-step-label').textContent = 'Paso 1 de 2';
+    document.getElementById('setup-title').textContent = 'Crea tu PIN';
+    document.getElementById('setup-sub').textContent = 'Elige un PIN de 6 dígitos para proteger tu dashboard';
+  } else {
+    document.getElementById('setup-step-label').textContent = 'Paso 2 de 2';
+    document.getElementById('setup-title').textContent = 'Confirma tu PIN';
+    document.getElementById('setup-sub').textContent = 'Introduce el mismo PIN otra vez para confirmar';
+  }
+}
+
+function setupKey(k) {
+  if (k === 'DEL') {
+    setupCurrent = setupCurrent.slice(0, -1);
+    buildDots('setup-dots', PIN_LENGTH, setupCurrent.length);
+    return;
+  }
+  if (setupCurrent.length >= PIN_LENGTH) return;
+  setupCurrent += k;
+  buildDots('setup-dots', PIN_LENGTH, setupCurrent.length);
+
+  if (setupCurrent.length === PIN_LENGTH) {
+    setTimeout(() => {
+      if (setupStep === 1) {
+        setupPin1 = setupCurrent;
+        setupCurrent = '';
+        setupStep = 2;
+        document.getElementById('setup-error').textContent = '';
+        updateSetupUI();
+      } else {
+        if (setupCurrent === setupPin1) {
+          // PIN confirmado
+          buildDots('setup-dots', PIN_LENGTH, PIN_LENGTH, 'success');
+          secState.pinHash = hashPin(setupCurrent);
+          secState.attempts = 0;
+          secState.blockedUntil = null;
+          saveSec();
+          setTimeout(() => {
+            document.getElementById('setup-screen').style.display = 'none';
+            showApp();
+          }, 600);
+        } else {
+          buildDots('setup-dots', PIN_LENGTH, PIN_LENGTH, 'error');
+          document.getElementById('setup-error').textContent = '⚠️ Los PINs no coinciden. Inténtalo de nuevo.';
+          setTimeout(() => {
+            setupStep = 1;
+            setupCurrent = '';
+            setupPin1 = '';
+            document.getElementById('setup-error').textContent = '';
+            updateSetupUI();
+          }, 1200);
+        }
+      }
+    }, 150);
+  }
+}
+
+// ── LOCK SCREEN ──────────────────────────────────────────────
+let lockCurrent = '';
+
+function showLockScreen() {
+  document.getElementById('lock-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('setup-screen').style.display = 'none';
+  lockCurrent = '';
+  buildDots('lock-dots', PIN_LENGTH, 0);
+  buildKeypad('lock-keypad', 'lockKey');
+  updateAttemptsMsg();
+}
+
+function updateAttemptsMsg() {
+  const remaining = MAX_ATTEMPTS - secState.attempts;
+  const el = document.getElementById('lock-attempts');
+  if (secState.attempts > 0) {
+    el.textContent = `Intentos restantes: ${remaining}`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+function lockKey(k) {
+  if (k === 'DEL') {
+    lockCurrent = lockCurrent.slice(0, -1);
+    buildDots('lock-dots', PIN_LENGTH, lockCurrent.length);
+    return;
+  }
+  if (lockCurrent.length >= PIN_LENGTH) return;
+  lockCurrent += k;
+  buildDots('lock-dots', PIN_LENGTH, lockCurrent.length);
+
+  if (lockCurrent.length === PIN_LENGTH) {
+    setTimeout(() => {
+      if (hashPin(lockCurrent) === secState.pinHash) {
+        // PIN correcto
+        buildDots('lock-dots', PIN_LENGTH, PIN_LENGTH, 'success');
+        secState.attempts = 0;
+        saveSec();
+        setTimeout(() => {
+          document.getElementById('lock-screen').style.display = 'none';
+          showApp();
+        }, 400);
+      } else {
+        // PIN incorrecto
+        buildDots('lock-dots', PIN_LENGTH, PIN_LENGTH, 'error');
+        secState.attempts++;
+        saveSec();
+
+        if (secState.attempts >= MAX_ATTEMPTS) {
+          secState.blockedUntil = Date.now() + BLOCK_TIME * 1000;
+          saveSec();
+          setTimeout(() => {
+            document.getElementById('lock-screen').style.display = 'none';
+            showBlockedScreen();
+          }, 800);
+        } else {
+          document.getElementById('lock-error').textContent = '❌ PIN incorrecto';
+          updateAttemptsMsg();
+          setTimeout(() => {
+            lockCurrent = '';
+            buildDots('lock-dots', PIN_LENGTH, 0);
+            document.getElementById('lock-error').textContent = '';
+          }, 900);
+        }
+      }
+    }, 150);
+  }
+}
+
+function lockApp() {
+  document.getElementById('app').style.display = 'none';
+  showLockScreen();
+}
+
+// Auto-bloqueo por inactividad (5 minutos)
+let inactivityTimer;
+function resetInactivity() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(() => {
+    if (document.getElementById('app').style.display !== 'none') {
+      lockApp();
+    }
+  }, 5 * 60 * 1000);
+}
+document.addEventListener('touchstart', resetInactivity);
+document.addEventListener('click', resetInactivity);
+
+// ── INIT SECURITY ────────────────────────────────────────────
+function initSecurity() {
+  if (checkBlocked()) {
+    showBlockedScreen();
+  } else if (!secState.pinHash) {
+    showSetupScreen();
+  } else {
+    showLockScreen();
+  }
+}
+
+// ── MAIN APP ─────────────────────────────────────────────────
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-function fmt(n){ return Number(n).toLocaleString('es-ES',{maximumFractionDigits:0})+' €'; }
-function today(){ return new Date().toISOString().split('T')[0]; }
-function fmtDate(d){ if(!d)return''; const[y,m,day]=d.split('-'); return`${day}/${m}/${y}`; }
-function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+const INIT={emergencia:0,deuda:5000,etfs:230,usdt:3668,ahorroMes:null,movimientos:[],notas:[]};
+let S=INIT;
+try{const s=localStorage.getItem(DATA_KEY);if(s)S={...INIT,...JSON.parse(s)};}catch{}
+function saveData(){try{localStorage.setItem(DATA_KEY,JSON.stringify(S));}catch{}}
 
 const TIPOS={
   emergencia:{label:'🛡️ Emergencia',color:'#34c97a'},
@@ -162,9 +479,26 @@ const TIPOS={
   ingreso:{label:'💰 Ingreso extra',color:'#34c97a'},
 };
 
-// ── TABS ─────────────────────────────────────────────────────
 const TABS=['📊 Resumen','📝 Movimientos','🗒️ Notas','🔄 Actualizar','🔭 Proyección'];
 let activeTab=0;
+
+function fmt(n){return Number(n).toLocaleString('es-ES',{maximumFractionDigits:0})+' €';}
+function today(){return new Date().toISOString().split('T')[0];}
+function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+function showApp() {
+  document.getElementById('app').style.display = 'flex';
+  renderTabs();
+  renderContent();
+  updateBadge();
+  resetInactivity();
+}
+
+function updateBadge(){
+  const n=new Date();
+  document.getElementById('month-badge').textContent=MONTHS[n.getMonth()]+' '+n.getFullYear();
+}
 
 function renderTabs(){
   document.getElementById('tabs').innerHTML=TABS.map((t,i)=>
@@ -172,26 +506,17 @@ function renderTabs(){
   ).join('');
 }
 
-function setTab(i){ activeTab=i; renderTabs(); renderContent(); }
+function setTab(i){activeTab=i;renderTabs();renderContent();}
 
-// ── MONTH BADGE ──────────────────────────────────────────────
-function updateBadge(){
-  const n=new Date();
-  document.getElementById('month-badge').textContent=MONTHS[n.getMonth()]+' '+n.getFullYear();
-}
-
-// ── PROGRESS BAR ─────────────────────────────────────────────
 function progBar(pct,color){
   return`<div class="prog-track"><div class="prog-fill" style="width:${Math.min(100,pct)}%;background:${color}"></div></div>`;
 }
 
-// ── SCREENS ──────────────────────────────────────────────────
 function screenResumen(){
   const pe=Math.min(100,(S.emergencia/4500)*100);
   const pd=Math.min(100,((5000-S.deuda)/5000)*100);
   const petfs=Math.min(100,(S.etfs/2030)*100);
   const pa=S.ahorroMes?Math.min(100,(S.ahorroMes/(0.4*1631))*100):0;
-
   const hitos=[
     {label:'Fondo emergencia 2.400€',detail:'Meta 3M · Oct 2026',done:S.emergencia>=2400},
     {label:'Deuda < 3.800€',detail:'Meta 3M · Oct 2026',done:S.deuda<=3800},
@@ -199,7 +524,6 @@ function screenResumen(){
     {label:'Deuda < 500€',detail:'Meta 6M · Ene 2027',done:S.deuda<=500},
     {label:'Deuda 0€ + Cartera 2.030€',detail:'Meta 12M · Jul 2027',done:S.deuda===0&&S.etfs>=2030},
   ];
-
   return`
   <div class="grid2">
     <div class="card-sm"><div class="metric-lbl">🛡️ Emergencia</div><div class="metric-val" style="color:#34c97a">${fmt(S.emergencia)}</div><div class="metric-sub">Meta: 4.500 €</div></div>
@@ -207,46 +531,23 @@ function screenResumen(){
     <div class="card-sm"><div class="metric-lbl">📈 ETFs</div><div class="metric-val" style="color:#4f8ef7">${fmt(S.etfs)}</div><div class="metric-sub">Meta 12M: 2.030 €</div></div>
     <div class="card-sm"><div class="metric-lbl">💵 USDT</div><div class="metric-val" style="color:#f5a623">${fmt(S.usdt)}</div><div class="metric-sub">Mantener</div></div>
   </div>
-
   <div class="card">
     <div class="section-title">Progreso hacia metas</div>
-    <div class="prog-row">
-      <div class="prog-header"><span class="prog-lbl">🛡️ Emergencia</span><span class="prog-pct">${Math.round(pe)}%</span></div>
-      ${progBar(pe,'#34c97a')}
-      <div class="prog-sub">${fmt(S.emergencia)} de 4.500 €</div>
-    </div>
-    <div class="prog-row">
-      <div class="prog-header"><span class="prog-lbl">⚔️ Deuda liquidada</span><span class="prog-pct">${Math.round(pd)}%</span></div>
-      ${progBar(pd,'#f04f5a')}
-      <div class="prog-sub">${fmt(5000-S.deuda)} pagados de 5.000 €</div>
-    </div>
-    <div class="prog-row">
-      <div class="prog-header"><span class="prog-lbl">📈 Cartera ETFs</span><span class="prog-pct">${Math.round(petfs)}%</span></div>
-      ${progBar(petfs,'#4f8ef7')}
-      <div class="prog-sub">${fmt(S.etfs)} de 2.030 €</div>
-    </div>
-    <div class="prog-row" style="margin-bottom:0">
-      <div class="prog-header"><span class="prog-lbl">💰 Ratio ahorro</span><span class="prog-pct">${S.ahorroMes?Math.round((S.ahorroMes/1631)*100)+'%':'—'}</span></div>
-      ${progBar(pa,'#7c5cbf')}
-      <div class="prog-sub">Meta: 40%+ de ingresos</div>
-    </div>
+    <div class="prog-row"><div class="prog-header"><span class="prog-lbl">🛡️ Emergencia</span><span class="prog-pct">${Math.round(pe)}%</span></div>${progBar(pe,'#34c97a')}<div class="prog-sub">${fmt(S.emergencia)} de 4.500 €</div></div>
+    <div class="prog-row"><div class="prog-header"><span class="prog-lbl">⚔️ Deuda liquidada</span><span class="prog-pct">${Math.round(pd)}%</span></div>${progBar(pd,'#f04f5a')}<div class="prog-sub">${fmt(5000-S.deuda)} pagados de 5.000 €</div></div>
+    <div class="prog-row"><div class="prog-header"><span class="prog-lbl">📈 Cartera ETFs</span><span class="prog-pct">${Math.round(petfs)}%</span></div>${progBar(petfs,'#4f8ef7')}<div class="prog-sub">${fmt(S.etfs)} de 2.030 €</div></div>
+    <div class="prog-row" style="margin-bottom:0"><div class="prog-header"><span class="prog-lbl">💰 Ratio ahorro</span><span class="prog-pct">${S.ahorroMes?Math.round((S.ahorroMes/1631)*100)+'%':'—'}</span></div>${progBar(pa,'#7c5cbf')}<div class="prog-sub">Meta: 40%+ de ingresos</div></div>
   </div>
-
   <div class="card">
     <div class="section-title">Distribución mensual — 1.100 €</div>
     <div class="cubo"><div class="cubo-icon">🛡️</div><div style="flex:1"><div class="cubo-name">Cubo 1 — Emergencia</div><div class="cubo-target">Colchón 3-6 meses</div></div><div class="cubo-amt">550 €</div></div>
     <div class="cubo"><div class="cubo-icon">⚔️</div><div style="flex:1"><div class="cubo-name">Cubo 2 — Deuda</div><div class="cubo-target">Primero la del 18% TAE</div></div><div class="cubo-amt">400 €</div></div>
     <div class="cubo"><div class="cubo-icon">📈</div><div style="flex:1"><div class="cubo-name">Cubo 3 — ETFs</div><div class="cubo-target">MSCI World, S&P500, EM</div></div><div class="cubo-amt">150 €</div></div>
-    <div class="hint" style="background:rgba(79,142,247,.08)">💡 Mes 9 aprox: deuda liquidada → redirige 400€ a ETFs (total 550€/mes)</div>
+    <div class="hint" style="background:rgba(79,142,247,.08)">💡 Mes 9 aprox: redirige 400€ a ETFs → total 550€/mes</div>
   </div>
-
   <div class="card">
     <div class="section-title">Hitos del plan</div>
-    ${hitos.map(h=>`
-    <div class="hito">
-      <span style="font-size:14px">${h.done?'🟢':'🔴'}</span>
-      <div style="flex:1"><div class="hito-text">${h.label}</div><div class="hito-detail">${h.detail}</div></div>
-    </div>`).join('')}
+    ${hitos.map(h=>`<div class="hito"><span style="font-size:14px">${h.done?'🟢':'🔴'}</span><div style="flex:1"><div class="hito-text">${h.label}</div><div class="hito-detail">${h.detail}</div></div></div>`).join('')}
   </div>`;
 }
 
@@ -255,37 +556,20 @@ function screenMovimientos(){
   <div class="card">
     <div class="section-title">➕ Añadir movimiento</div>
     <div class="form-group"><input type="date" id="mov-fecha" value="${today()}"></div>
-    <div class="form-group">
-      <select id="mov-tipo">
-        <option value="">— Tipo —</option>
-        ${Object.entries(TIPOS).map(([v,t])=>`<option value="${v}">${t.label}</option>`).join('')}
-      </select>
-    </div>
+    <div class="form-group"><select id="mov-tipo"><option value="">— Tipo —</option>${Object.entries(TIPOS).map(([v,t])=>`<option value="${v}">${t.label}</option>`).join('')}</select></div>
     <div class="form-group"><input type="number" id="mov-imp" placeholder="Importe €" inputmode="decimal"></div>
     <div class="form-group"><input type="text" id="mov-nota" placeholder="Nota (opcional)"></div>
     <button class="btn btn-primary" onclick="addMov()">Guardar movimiento</button>
   </div>
-
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div class="section-title" style="margin-bottom:0">Historial</div>
       <span style="background:rgba(79,142,247,.15);color:#4f8ef7;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;font-family:monospace">${S.movimientos.length} entradas</span>
     </div>
     ${S.movimientos.length===0?'<div class="empty">Sin movimientos aún.</div>':
-      S.movimientos.map(m=>{
-        const t=TIPOS[m.tipo]||{label:m.tipo,color:'#4f8ef7'};
-        const isPos=['emergencia','etf','usdt','ingreso'].includes(m.tipo);
-        return`<div class="mov-item">
-          <div class="mov-date">${fmtDate(m.fecha)}</div>
-          <div class="mov-info">
-            <span class="tag" style="background:${t.color}22;color:${t.color}">${t.label}</span>
-            ${m.nota?`<div style="font-size:10px;color:#6b7280;margin-top:2px">${m.nota}</div>`:''}
-          </div>
-          <div class="mov-amt" style="color:${isPos?'#34c97a':'#f04f5a'}">${isPos?'+':'-'}${m.importe.toLocaleString('es-ES')} €</div>
-          <button class="btn btn-danger" onclick="delMov(${m.id})">✕</button>
-        </div>`;
-      }).join('')
-    }
+      S.movimientos.map(m=>{const t=TIPOS[m.tipo]||{label:m.tipo,color:'#4f8ef7'};const isPos=['emergencia','etf','usdt','ingreso'].includes(m.tipo);
+      return`<div class="mov-item"><div class="mov-date">${fmtDate(m.fecha)}</div><div class="mov-info"><span class="tag" style="background:${t.color}22;color:${t.color}">${t.label}</span>${m.nota?`<div style="font-size:10px;color:#6b7280;margin-top:2px">${m.nota}</div>`:''}</div><div class="mov-amt" style="color:${isPos?'#34c97a':'#f04f5a'}">${isPos?'+':'-'}${m.importe.toLocaleString('es-ES')} €</div><button class="btn btn-danger" onclick="delMov(${m.id})">✕</button></div>`;
+      }).join('')}
   </div>`;
 }
 
@@ -300,13 +584,7 @@ function screenNotas(){
   <div class="card">
     <div class="section-title">📋 Notas guardadas</div>
     ${S.notas.length===0?'<div class="empty">Sin notas aún.</div>':
-      S.notas.map(n=>`
-      <div class="nota-item">
-        <div class="nota-dot"></div>
-        <div style="flex:1"><div class="nota-text">${n.texto}</div><div class="nota-date">${fmtDate(n.fecha)}</div></div>
-        <button class="btn btn-danger" onclick="delNota(${n.id})">✕</button>
-      </div>`).join('')
-    }
+      S.notas.map(n=>`<div class="nota-item"><div class="nota-dot"></div><div style="flex:1"><div class="nota-text">${n.texto}</div><div class="nota-date">${fmtDate(n.fecha)}</div></div><button class="btn btn-danger" onclick="delNota(${n.id})">✕</button></div>`).join('')}
   </div>`;
 }
 
@@ -322,12 +600,13 @@ function screenActualizar(){
   <div class="card">
     <div class="section-title">🔄 Actualizar saldos reales</div>
     <div style="font-size:11px;color:#9ca3af;margin-bottom:14px">Deja en blanco los campos que no quieras cambiar.</div>
-    ${fields.map(f=>`
-    <div class="form-group">
-      <div class="form-label"><span>${f.label}</span><span style="color:#6b7280">Actual: ${f.current}</span></div>
-      <input type="number" id="upd-${f.key}" placeholder="Nuevo valor €" inputmode="decimal">
-    </div>`).join('')}
+    ${fields.map(f=>`<div class="form-group"><div class="form-label"><span>${f.label}</span><span style="color:#6b7280">Actual: ${f.current}</span></div><input type="number" id="upd-${f.key}" placeholder="Nuevo valor €" inputmode="decimal"></div>`).join('')}
     <button class="btn btn-primary" onclick="actualizarSaldos()" style="margin-top:8px">Actualizar dashboard</button>
+  </div>
+  <div class="card" style="border-color:rgba(240,79,90,.3)">
+    <div class="section-title" style="color:var(--red)">⚠️ Zona de seguridad</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:12px">¿Quieres cambiar tu PIN actual?</div>
+    <button class="btn" style="background:rgba(240,79,90,.15);color:var(--red);border:1px solid rgba(240,79,90,.3)" onclick="changePIN()">Cambiar PIN</button>
   </div>`;
 }
 
@@ -347,31 +626,21 @@ function screenProyeccion(){
   ];
   return`
   <div class="card">
-    <div class="section-title">🔭 Proyección a 5 años (831€/mes desde mes 9)</div>
-    ${years.map(y=>`
-    <div class="proj-row">
-      <div><div class="proj-lbl">${y.label}</div><div class="proj-sub">${y.sub}</div></div>
-      <div class="proj-val" style="color:${y.color}">${y.val}</div>
-    </div>`).join('')}
-    <div class="hint" style="background:rgba(79,142,247,.08);margin-top:10px">📖 Rentabilidad histórica MSCI World ~7% anual real. Fuente: Bogle on Mutual Funds (1993). Rentabilidades pasadas no garantizan futuras.</div>
+    <div class="section-title">🔭 Proyección a 5 años</div>
+    ${years.map(y=>`<div class="proj-row"><div><div class="proj-lbl">${y.label}</div><div class="proj-sub">${y.sub}</div></div><div class="proj-val" style="color:${y.color}">${y.val}</div></div>`).join('')}
+    <div class="hint" style="background:rgba(79,142,247,.08);margin-top:10px">📖 Rentabilidad histórica MSCI World ~7% anual real. Fuente: Bogle on Mutual Funds (1993).</div>
   </div>
   <div class="card">
     <div class="section-title">📊 Distribución ETF objetivo</div>
-    ${etfs.map(e=>`
-    <div class="prog-row">
-      <div class="prog-header"><span class="prog-lbl">${e.label}</span><span class="prog-pct" style="color:${e.color}">${e.pct}% · ${e.sub}</span></div>
-      ${progBar(e.pct,e.color)}
-    </div>`).join('')}
+    ${etfs.map(e=>`<div class="prog-row"><div class="prog-header"><span class="prog-lbl">${e.label}</span><span class="prog-pct" style="color:${e.color}">${e.pct}% · ${e.sub}</span></div>${progBar(e.pct,e.color)}</div>`).join('')}
   </div>`;
 }
 
-// ── RENDER ───────────────────────────────────────────────────
 function renderContent(){
   const screens=[screenResumen,screenMovimientos,screenNotas,screenActualizar,screenProyeccion];
   document.getElementById('content').innerHTML=screens[activeTab]();
 }
 
-// ── ACTIONS ──────────────────────────────────────────────────
 function addMov(){
   const fecha=document.getElementById('mov-fecha').value;
   const tipo=document.getElementById('mov-tipo').value;
@@ -380,46 +649,45 @@ function addMov(){
   if(!tipo||isNaN(imp)||imp<=0){toast('⚠️ Completa tipo e importe');return;}
   const m={id:Date.now(),fecha,tipo,importe:imp,nota};
   S.movimientos.unshift(m);
-  if(tipo==='emergencia') S.emergencia+=imp;
-  if(tipo==='deuda') S.deuda=Math.max(0,S.deuda-imp);
-  if(tipo==='etf') S.etfs+=imp;
-  if(tipo==='usdt') S.usdt+=imp;
-  save(); toast('✅ Guardado'); renderContent();
+  if(tipo==='emergencia')S.emergencia+=imp;
+  if(tipo==='deuda')S.deuda=Math.max(0,S.deuda-imp);
+  if(tipo==='etf')S.etfs+=imp;
+  if(tipo==='usdt')S.usdt+=imp;
+  saveData();toast('✅ Guardado');renderContent();
 }
 
-function delMov(id){
-  S.movimientos=S.movimientos.filter(m=>m.id!==id);
-  save(); renderContent();
-}
+function delMov(id){S.movimientos=S.movimientos.filter(m=>m.id!==id);saveData();renderContent();}
 
 function addNota(){
   const texto=document.getElementById('nota-texto').value.trim();
   const fecha=document.getElementById('nota-fecha').value;
   if(!texto){toast('⚠️ Escribe algo primero');return;}
   S.notas.unshift({id:Date.now(),texto,fecha});
-  save(); toast('✅ Nota guardada'); renderContent();
+  saveData();toast('✅ Nota guardada');renderContent();
 }
 
-function delNota(id){
-  S.notas=S.notas.filter(n=>n.id!==id);
-  save(); renderContent();
-}
+function delNota(id){S.notas=S.notas.filter(n=>n.id!==id);saveData();renderContent();}
 
 function actualizarSaldos(){
   const get=id=>{const v=document.getElementById(id).value;return v!==''&&!isNaN(parseFloat(v))?parseFloat(v):null;};
   const e=get('upd-emergencia'),d=get('upd-deuda'),et=get('upd-etfs'),u=get('upd-usdt'),a=get('upd-ahorro');
-  if(e!==null) S.emergencia=e;
-  if(d!==null) S.deuda=d;
-  if(et!==null) S.etfs=et;
-  if(u!==null) S.usdt=u;
-  if(a!==null) S.ahorroMes=a;
-  save(); toast('✅ Dashboard actualizado'); renderContent();
+  if(e!==null)S.emergencia=e;
+  if(d!==null)S.deuda=d;
+  if(et!==null)S.etfs=et;
+  if(u!==null)S.usdt=u;
+  if(a!==null)S.ahorroMes=a;
+  saveData();toast('✅ Actualizado');renderContent();
 }
 
-// ── INIT ─────────────────────────────────────────────────────
-updateBadge();
-renderTabs();
-renderContent();
+function changePIN(){
+  secState.pinHash = null;
+  saveSec();
+  document.getElementById('app').style.display = 'none';
+  showSetupScreen();
+}
+
+// ── START ────────────────────────────────────────────────────
+initSecurity();
 </script>
 </body>
 </html>
